@@ -11,6 +11,7 @@ char * nstr;
 
 gboolean imprimir_tag(gpointer key, gpointer value, gpointer data);
 void insereTag(char * tag);
+void initTable();
 %}
 %x TAG
 %%
@@ -23,14 +24,24 @@ int yywrap(){ return 1; }
 int main(int argc, char* argv[]){
 
     tags = g_tree_new((GCompareFunc)strcmp);
-    fp = fopen(argv[1],"w+");
+    fp = fopen("html/estatisticas.html","w+");
     yylex();
+
+	fprintf(fp, "<HTML> <BODY> <meta charset='UTF-8'/>");
+	initTable();
     g_tree_foreach(tags, imprimir_tag, NULL);
+	fprintf(fp, "</table>");
+	fprintf(fp,"</BODY> </HTML>");
+	fclose(fp);
     return 0;
 }
 
 gboolean imprimir_tag(gpointer key, gpointer value, gpointer data){
-    fprintf(fp,"%s -> %d\n",key,*((int *)value));
+	fprintf(fp, "<tr>");
+	fprintf(fp, "<td>%s</td>\n",key);
+	fprintf(fp, "<td>%d</td>",*((int *)value));
+	fprintf(fp, "</tr>");
+
     return FALSE;
 }
 
@@ -50,3 +61,11 @@ void insereTag(char * tag){
     }
 }
 
+void initTable(){
+	fprintf(fp, "<style>table, th, td { border: 1px solid black;} </style>");
+	fprintf(fp, "<table>");
+	fprintf(fp, "<tr>");
+	fprintf(fp, "<th>Tag</th>");
+	fprintf(fp, "<th>Número de Ocorrências</th>");
+	fprintf(fp, "</tr>");
+}
