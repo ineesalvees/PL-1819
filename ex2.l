@@ -8,26 +8,30 @@
 FILE *fp;
 char buffer_post [24*1024];
 GTree * tags;
+GTree * posts;
 
 void inithtml(char * file_name);
 void insertTagsLink(char * tag);
 void bufferclose();
 void endhtml();
 void createIndex();
+int searchPost(char * str);
+
 %}
 %x PUB
 %x TAGS
 %x TEXT
+%x DISCARD
 %%
 
 \<pub\  {BEGIN PUB;}
-<PUB>id=\"[^\"]+ {inithtml(yytext+4);}
+<PUB>id=\"[^\"]+ {if (searchPost(yytext+4)) {inithtml(yytext+4);} else {BEGIN DISCARD;}}
 <PUB>\<title\>[^\<]+ {strcat(buffer_post,yytext+7); bufferclose(); fprintf(fp, "%s",yytext+7);}
 <PUB>\<\/pub\> {buffer_post[0]='\0';endhtml(); BEGIN INITIAL;}
 <PUB>\<tags\> {fprintf(fp,"<b>Tags: </b>\n\t<ul>"); BEGIN TAGS;}
 <TAGS>\<\/tags\> {fprintf(fp,"</ul>"); BEGIN PUB;}
 <TAGS>\<tag\>[^\<]+ {fprintf(fp,"<li>%s",yytext); insertTagsLink(yytext+5);}
-<TAGS>\<\tag\> {fprintf(fp, "</li>");}
+<TAGS>\<\/tag\> {fprintf(fp, "</li>");}
 <PUB>\<author_date\> {fprintf(fp, "<p><b>Data: </b>");}
 <PUB>\<\/author_date\> {fprintf(fp, "</p>");}
 <PUB>\<category\> {fprintf(fp, "<p><b>Categoria: </b>");}
@@ -36,6 +40,8 @@ void createIndex();
 <TEXT>\.[\n]+ {fprintf(fp, ".</p><p>");}
 <TEXT>\n[\n]+ {fprintf(fp, "</p><p>");}
 <TEXT>\<\/text\> {fprintf(fp, "</p>"); BEGIN PUB;}
+<DISCARD>.|\n {;}
+<DISCARD>\<\/pub\> {BEGIN INITIAL;}
 
 
 <*>.|\n {fprintf(fp,"%s",yytext);}
@@ -44,6 +50,7 @@ int yywrap(){ return 1; }
 int main(int argc, char* argv[]){
 
 	tags = g_tree_new((GCompareFunc)strcmp);
+	posts = g_tree_new((GCompareFunc)strcmp);
     yylex();
 	createIndex();
     return 0;
@@ -104,5 +111,19 @@ void createIndex(){
 	fprintf(fp,"<HTML> <BODY> <meta charset='UTF-8'/>\n");
 	fprintf(fp, "<UL>\n");
 	g_tree_foreach(tags,printTreeLinks,NULL);
+	fprintf(fp, "</UL>\n");
 	endhtml();
+}
+
+int searchPost(char * str){
+	char * post_id = strdup(str);
+	int * i = g_tree_lookup(posts,post_id);
+	if (i == NULL){
+		i = malloc(sizeof(int));
+		g_tree_insert(posts,post_id,i);
+		return 1;
+	}
+	else{
+		return 0;
+	}
 }
