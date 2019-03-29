@@ -26,11 +26,12 @@ int searchPost(char * str);
 
 \<pub\  {BEGIN PUB;}
 <PUB>id=\"[^\"]+ {if (searchPost(yytext+4)) {inithtml(yytext+4);} else {BEGIN DISCARD;}}
-<PUB>\<title\>[^\<]+ {strcat(buffer_post,yytext+7); bufferclose(); fprintf(fp, "%s",yytext+7);}
+<PUB>\<title\>[^\<]+ {strcat(buffer_post,yytext+7); bufferclose(); fprintf(fp, "<h1>%s",yytext+7);}
+<PUB>\<\/title\> {fprintf(fp, "</h1>");}
 <PUB>\<\/pub\> {buffer_post[0]='\0';endhtml(); BEGIN INITIAL;}
 <PUB>\<tags\> {fprintf(fp,"<b>Tags: </b>\n\t<ul>"); BEGIN TAGS;}
 <TAGS>\<\/tags\> {fprintf(fp,"</ul>"); BEGIN PUB;}
-<TAGS>\<tag\>[^\<]+ {fprintf(fp,"<li>%s",yytext); insertTagsLink(yytext+5);}
+<TAGS>\<tag\>[^\<]+ {fprintf(fp,"<li>%s",yytext+5); insertTagsLink(yytext+5);}
 <TAGS>\<\/tag\> {fprintf(fp, "</li>");}
 <PUB>\<author_date\> {fprintf(fp, "<p><b>Data: </b>");}
 <PUB>\<\/author_date\> {fprintf(fp, "</p>");}
