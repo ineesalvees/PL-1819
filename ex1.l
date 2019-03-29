@@ -29,7 +29,7 @@ FINISH (\<\/pub\>)
 <ID>.|\n {;}
 <CATEGORY>.+\n {yytext[yyleng-1]='\0'; strcpy(category_buffer,"   <category>"); strcat(category_buffer,yytext); strcat(category_buffer,"</category>\n"); BEGIN TITLE;}
 <TITLE>\n(.*?)\n\n {yytext[yyleng-2]='\0'; strcpy(title_buffer,"   <title>");strcat(title_buffer,yytext+1); strcat(title_buffer,"</title>\n"); BEGIN INITIAL;}
-<TITLE>[━]+\n {printf("%s\n",yytext); strcpy(title_buffer,"   <title>");strcat(title_buffer,"Sem título.");strcat(title_buffer,"</title>\n"); BEGIN INITIAL;}
+<TITLE>[━]+\n {strcpy(title_buffer,"   <title>");strcat(title_buffer,"Sem título.");strcat(title_buffer,"</title>\n"); BEGIN INITIAL;}
 #DATE: {BEGIN DATE;}
 <DATE>\]\ [^\n]+ {fprintf(fp,"%s",title_buffer); fprintf(fp,"   <author_date>");fprintf(fp,"%s",yytext+2); fprintf(fp,"</author_date>\n"); fprintf(fp,"%s",tags_buffer); fprintf(fp,"%s",category_buffer); fprintf(fp,"   <text>"); BEGIN TEXT;}
 <TEXT>Etiquetas:[^\n]+ {;}
