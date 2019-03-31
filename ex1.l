@@ -41,7 +41,7 @@ FINISH (\<\/pub\>)
 int yywrap(){ return 1; }
 int main(int argc, char* argv[]){
 
-    fp = fopen(argv[1],"w+");
+    fp = fopen("out.txt","w+");
     yylex();
     return 0;
 }

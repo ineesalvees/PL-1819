@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <gmodule.h>
 
 
@@ -50,6 +53,7 @@ int searchPost(char * str);
 int yywrap(){ return 1; }
 int main(int argc, char* argv[]){
 
+	mkdir("html",0700);
 	tags = g_tree_new((GCompareFunc)strcmp);
 	posts = g_tree_new((GCompareFunc)strcmp);
     yylex();

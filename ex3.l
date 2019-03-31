@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gmodule.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <ctype.h>
 
 FILE * fp;
@@ -24,6 +27,7 @@ int yywrap(){ return 1; }
 int main(int argc, char* argv[]){
 
     tags = g_tree_new((GCompareFunc)strcmp);
+	mkdir("html",0700);
     fp = fopen("html/estatisticas.html","w+");
     yylex();
 
