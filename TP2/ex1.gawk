@@ -1,4 +1,4 @@
-BEGIN	{FS="[;]+"; 
+BEGIN	{FS=";";
 		print "---- Exercício 1 ----"
 
         titulo = "<h1 align=\"center\"> Número de processos registados por Concelho e Freguesia </h1>\n";
@@ -9,11 +9,11 @@ BEGIN	{FS="[;]+";
 
 
         system("mkdir -p results/");
-        ficheiro = "results/ex1.html"; 
+        ficheiro = "results/ex1.html";
 
 }
 
-		NR > 2 {conta[$4][$3]++}
+		NR > 2 {conta[$5][$4]++}
 
 END {
 	print "<html> <head> <meta charset='UTF-8'/> <style>table, th, td {border: 1px solid black; border-collapse: collapse;} th, td {padding: 5px;} th {text-align: center;}</style> </head> <body>" > ficheiro;
@@ -22,8 +22,10 @@ END {
 
 	printf(linha,"Freguesias","") > ficheiro;
 
-        for (concelho in conta){        		
+        for (concelho in conta){
+				ficheiroAux = "results/"
                 printf(linha,concelho,"") > ficheiro;
+
                 printf("<table style=\"width:30%\"><tr> <th>%s</th><th>N.º de processos registados por freguesia</th> </tr>","Freguesia") > ficheiro;
 
                 for (freguesia in conta[concelho])
@@ -42,7 +44,7 @@ END {
                 for (freguesia in conta[concelho])
                         r+=conta[concelho][freguesia]
                 printf (tabela, concelho, r) > ficheiro;
-        
+
         };
         printf (tabela,"Total:", NR-2) > ficheiro;
 
