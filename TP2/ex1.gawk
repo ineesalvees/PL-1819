@@ -23,7 +23,6 @@ END {
 	printf(linha,"Freguesias","") > ficheiro;
 
         for (concelho in conta){
-				ficheiroAux = "results/"
                 printf(linha,concelho,"") > ficheiro;
 
                 printf("<table style=\"width:30%\"><tr> <th>%s</th><th>N.º de processos registados por freguesia</th> </tr>","Freguesia") > ficheiro;
