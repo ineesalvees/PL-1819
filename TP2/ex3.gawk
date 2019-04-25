@@ -22,7 +22,7 @@ END {
 		print header > ficheiro;
 		print titulo > ficheiro;
 
-        printf("<table style=\"width:30%\"><tr> <th>%s</th><th>Nº de ocurrências</th> </tr>","Nome Próprio") > ficheiro;
+        printf("<table style=\"width:30%\"><tr> <th>%s</th><th>Nº de ocorrências</th> </tr>","Nome Próprio") > ficheiro;
 		for(nome in conta){
 			printf (tabela,nome,conta[nome]) > ficheiro;
 		}
