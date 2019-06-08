@@ -1,0 +1,25 @@
+START
+	teste
+	HEAD
+		LINK 8
+	BODY
+		VIDEO helo 'teste.mp4' ;
+		TAB
+			TH 'Numero Ocurren' |
+			TH 'Designacao'
+			TD '25' |
+			TD 'Braga' :
+			TD '54' |
+			TD 'Lisboa'
+		ENDTAB
+	NEXT
+	HEAD
+		LINK 10
+	BODY
+		IMAGEM hlol 'dashboard.png'
+	NEXT
+	HEAD
+		LAST
+	BODY
+		VIDEO hlal 'teste.mp4'
+END
