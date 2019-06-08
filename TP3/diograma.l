@@ -11,6 +11,7 @@
 (?i:LINK)				{return LINK;}
 (?i:LAST)				{return LAST;}
 (?i:VIDEO)				{return VIDEO;}
+(?i:AUDIO)				{return AUDIO;}
 (?i:BODY)				{return BODY;}
 (?i:HEAD)				{return HEAD;}
 (?i:IMAGEM)				{return IMAGEM;}
@@ -18,10 +19,12 @@
 (?i:TH)					{return TH;}
 (?i:TAB)				{return TAB;}
 (?i:ENDTAB)				{return ENDTAB;}
+(?i:TITULO)				{return TITULO;}
+(?i:BACKGROUND)			{return BACKGROUND;}
 [a-zA-Z]+				{yylval.str = strdup(yytext); return WORD; }
 [0-9]+      			{yylval.num = atoi(yytext); return NUM;}
-[;\:|]					{return yytext[0];}
-\'[^\n]+\'  			{yytext[yyleng-1] = '\0'; yylval.sentence = strdup(yytext+1); return SENTENCE; }
+[;\:|\{\}]				{return yytext[0];}
+\'[^\']+\'  			{yytext[yyleng-1] = '\0'; yylval.sentence = strdup(yytext+1); return SENTENCE; }
 .|\n {;}
 %%
 

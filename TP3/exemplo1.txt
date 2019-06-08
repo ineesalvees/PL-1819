@@ -1,7 +1,8 @@
 START
-	teste 3
+	{ 'teste' 3 BACKGROUND 'background.jpg' }
 	HEAD
 		LINK 8
+	TITULO 'Era uma vez uma acções'
 	BODY
 		VIDEO helo 'teste.mp4' ;
 		TAB
@@ -20,6 +21,7 @@ START
 	NEXT
 	HEAD
 		LAST
+	TITULO 'Era uma vez duas acções'
 	BODY
 		VIDEO hlal 'teste.mp4'
 END

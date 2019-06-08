@@ -13,19 +13,22 @@ void yyerror(char* c);
 void openFile(int last,int time);
 char * generateVideo(char * src,char * name);
 char * generateImage(char * src,char * name);
+char * generateAudio(char * src,char * name);
 void style();
 char * navbar();
+char * drawTitle(char * str);
+char * UrlBackground;
 
 int elemento = 1;
 int n_slides;
 FILE * fp;
 %}
 %union {char * str; char * sentence; int num;}
-%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB
+%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB TITULO BACKGROUND AUDIO
 %token <str> WORD
 %token <num> NUM
 %token <sentence> SENTENCE
-%type <str> generator Designacao Elementos Elemento Head Body Video Url Nome Conteudo Imagem Tabela Cabecalho Linhas Linha Coluna
+%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia
 
 %%
 generator : START Designacao Elementos END {printf("%s\n",$2);}
@@ -34,23 +37,38 @@ Elementos : Elemento
 		  | Elementos NEXT Elemento
 		  ;
 
-Elemento : HEAD Head BODY Body {char * navb = navbar(); fprintf(fp,"	<body>\n		%s\n		%s\n	</body>\n</html>",navb,$4); fclose(fp); free(navb);}
+Elemento : HEAD Head BODY Body {char * navb = navbar();
+								fprintf(fp,"	<body style=\"background-image:url('%s');background-repeat: no-repeat; background-size:cover;\">\n		%s\n		%s\n	</body>\n</html>"
+									,UrlBackground,navb,$4);
+								fclose(fp);
+								free(navb);
+								}
+		 | HEAD Head Titulo BODY Body {char * navb = navbar();
+			 						   char * titulo = drawTitle($3);
+									   fprintf(fp,"	<body style=\"background-image:url('%s');background-repeat: no-repeat; background-size:cover;\">\n		%s\n		%s%s\n	</body>\n</html>"
+									   			,UrlBackground
+												,navb
+												,titulo
+												,$5);
+									   fclose(fp);
+									   free(navb);
+									   free(titulo);
+								   	  }
 		 ;
 
 Body : Conteudo {$$=$1;}
 	 | Body ';' Conteudo {asprintf(&$$,"%s%s",$1,$3);}
 	 ;
 
-Conteudo : Video	{$$=$1;}
-		 | Imagem	{$$=$1;}
+Conteudo : Multimedia	{$$=$1;}
 		 | Tabela	{$$=$1;}
 		 ;
 
-Imagem : IMAGEM Nome Url {char * aux = generateImage($3,$2); asprintf(&$$,"%s",aux); free(aux);}
-	   ;
 
-Video : VIDEO Nome Url {char * aux = generateVideo($3,$2); asprintf(&$$,"%s",aux); free(aux);}
-      ;
+Multimedia : IMAGEM Nome Url {char * aux = generateImage($3,$2); asprintf(&$$,"%s",aux); free(aux);}
+		   | VIDEO Nome Url {char * aux = generateVideo($3,$2); asprintf(&$$,"%s",aux); free(aux);}
+		   | AUDIO Nome Url {char * aux = generateAudio($3,$2); asprintf(&$$,"%s",aux); free(aux);}
+		   ;
 
 Url : SENTENCE {$$=$1;}
 	;
@@ -62,7 +80,8 @@ Head : LAST			{openFile(1,0); elemento++;}
 	 | LINK NUM		{openFile(0,$2); elemento++;}
 	 ;
 
-Designacao : WORD NUM {diagrama_nome = strdup($1); mkdir(diagrama_nome,0700); n_slides = $2;}
+Designacao : '{' SENTENCE NUM '}' {diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = ""; asprintf(&$$,"%s-%d",$2,$3);}
+           | '{' SENTENCE NUM BACKGROUND SENTENCE '}' {diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = strdup($5); asprintf(&$$,"%s-%d",$2,$3);}
 		   ;
 
 Tabela : TAB Cabecalho Linhas ENDTAB {asprintf(&$$,"<style>table, th, td { border: 1px solid black;} </style>\n<table style=\"display: block; margin-left: auto; margin-right: auto; width: 50%%\">%s%s</table>\n",$2,$3);}
@@ -83,18 +102,27 @@ Coluna : TD SENTENCE 		{asprintf(&$$,"<td>%s</td>\n",$2);}
 	   | TH SENTENCE		{asprintf(&$$,"<th>%s</th>\n",$2);}
 	   ;
 
+Titulo : TITULO SENTENCE	{$$=$2;}
+       ;
+
 %%
 #include "lex.yy.c"
 
 char * generateVideo(char * src,char * name){
 	char buffer[1024];
-	sprintf(buffer,"<video width=\"600\" height=\"600\" style=\"display: block; margin-left: auto; margin-right: auto;\"  controls>  <source src=\"%s\" type=\"video/mp4\"> </video>		<p style=\"text-align: center;\">%s</p>\n",src,name);
+	sprintf(buffer,"<video width=\"800\" style=\"display: block; margin-left: auto; margin-right: auto;\"  controls>  <source src=\"%s\" type=\"video/mp4\"> </video>		<p style=\"text-align: center;\">%s</p>\n",src,name);
 	return strdup(buffer);
 }
 
 char * generateImage(char * src,char * name){
 	char buffer[1024];
 	sprintf(buffer,"<img style=\"display: block; margin-left: auto; margin-right: auto; width: 50%%\" src=\"%s\"/>		<p style=\"text-align: center;\">%s</p>\n",src,name);
+	return strdup(buffer);
+}
+
+char * generateAudio(char * src,char * name){
+	char buffer[1024];
+	sprintf(buffer,"<audio style=\"display: block; margin-left: auto; margin-right: auto;\"  controls>  <source src=\"%s\" type=\"video/mpeg\"> </audio>		<p style=\"text-align: center;\">%s</p>\n",src,name);
 	return strdup(buffer);
 }
 
@@ -133,6 +161,12 @@ char * navbar(){
 	}
 	strcat(buffer,"</div>\n");
 
+	return strdup(buffer);
+}
+
+char * drawTitle(char * str){
+	char buffer[1024];
+	sprintf(buffer,"		<h1 align=\"center\">%s</h1>\n",str);
 	return strdup(buffer);
 }
 
