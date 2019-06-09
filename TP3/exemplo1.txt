@@ -1,8 +1,11 @@
 START
-	{ 'teste' 3 BACKGROUND 'background.jpg' }
+	{ 'teste' 4 BACKGROUND 'background.jpg' }
+	PAGINI
+		LINK 10
+		TITULO 'Era a primeira vez' 144
 	HEAD
 		LINK 8
-	TITULO 'Era uma vez uma acções'
+	TITULO 'Era uma vez uma acções' 40
 	BODY
 		VIDEO helo 'teste.mp4' ;
 		TAB
@@ -12,16 +15,32 @@ START
 			TD 'Braga' :
 			TD '54' |
 			TD 'Lisboa'
-		ENDTAB
+		ENDTAB;
+		AUDIO lol 'sound.mp3'
 	NEXT
 	HEAD
 		LINK 10
 	BODY
-		IMAGEM hlol 'dashboard.png'
+		IMAGEM hlol 'dashboard.png' ;
+		LIST
+			'Olas' +
+			'Estou' +
+			'afinal'
+		ENDLIST
+	NEXT
+	HEAD
+		LINK 10
+	TITULO 'Era uma vez duas acções' 40
+	BODY
+		VIDEO hlal 'teste.mp4'
 	NEXT
 	HEAD
 		LAST
-	TITULO 'Era uma vez duas acções'
+	TITULO 'Creditos' 45
 	BODY
-		VIDEO hlal 'teste.mp4'
+		LIST
+			'Diogo Sobral' +
+			'Alexandre Parreco' +
+			'Inês Dogo'
+		ENDLIST
 END

@@ -16,22 +16,22 @@ char * generateImage(char * src,char * name);
 char * generateAudio(char * src,char * name);
 void style();
 char * navbar();
-char * drawTitle(char * str);
+char * drawTitle(char * str,int fontsize);
 char * UrlBackground;
 
-int elemento = 1;
+int elemento = 0;
 int n_slides;
 FILE * fp;
 %}
 %union {char * str; char * sentence; int num;}
-%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB TITULO BACKGROUND AUDIO
+%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB TITULO BACKGROUND AUDIO LIST ENDLIST PAGINI
 %token <str> WORD
 %token <num> NUM
 %token <sentence> SENTENCE
-%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia
+%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia ListaHtml Lista PagIni
 
 %%
-generator : START Designacao Elementos END {printf("%s\n",$2);}
+generator : START Designacao PagIni Elementos END {printf("%s\n",$2);}
 
 Elementos : Elemento
 		  | Elementos NEXT Elemento
@@ -44,15 +44,13 @@ Elemento : HEAD Head BODY Body {char * navb = navbar();
 								free(navb);
 								}
 		 | HEAD Head Titulo BODY Body {char * navb = navbar();
-			 						   char * titulo = drawTitle($3);
 									   fprintf(fp,"	<body style=\"background-image:url('%s');background-repeat: no-repeat; background-size:cover;\">\n		%s\n		%s%s\n	</body>\n</html>"
 									   			,UrlBackground
 												,navb
-												,titulo
+												,$3
 												,$5);
 									   fclose(fp);
 									   free(navb);
-									   free(titulo);
 								   	  }
 		 ;
 
@@ -61,7 +59,8 @@ Body : Conteudo {$$=$1;}
 	 ;
 
 Conteudo : Multimedia	{$$=$1;}
-		 | Tabela	{$$=$1;}
+		 | Tabela		{$$=$1;}
+		 | ListaHtml	{$$=$1;}
 		 ;
 
 
@@ -79,6 +78,16 @@ Nome : WORD {$$=$1;}
 Head : LAST			{openFile(1,0); elemento++;}
 	 | LINK NUM		{openFile(0,$2); elemento++;}
 	 ;
+
+PagIni : PAGINI Head Titulo {char * navb = navbar();
+							  fprintf(fp,"	<body style=\"background-image:url('%s');background-repeat: no-repeat; background-size:cover;\">\n		%s\n		%s	</body>\n</html>"
+									   ,UrlBackground
+									   ,navb
+									   ,$3);
+							  fclose(fp);
+							  free(navb);
+					}
+		;
 
 Designacao : '{' SENTENCE NUM '}' {diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = ""; asprintf(&$$,"%s-%d",$2,$3);}
            | '{' SENTENCE NUM BACKGROUND SENTENCE '}' {diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = strdup($5); asprintf(&$$,"%s-%d",$2,$3);}
@@ -102,8 +111,15 @@ Coluna : TD SENTENCE 		{asprintf(&$$,"<td>%s</td>\n",$2);}
 	   | TH SENTENCE		{asprintf(&$$,"<th>%s</th>\n",$2);}
 	   ;
 
-Titulo : TITULO SENTENCE	{$$=$2;}
+Titulo : TITULO SENTENCE NUM	{char * title = drawTitle($2,$3); asprintf(&$$,"%s",title); free(title);}
        ;
+
+ListaHtml : LIST Lista ENDLIST {asprintf(&$$,"<ul style=\"display:table; margin:0 auto;\">%s</ul>\n",$2);}
+		  ;
+
+Lista : SENTENCE			{asprintf(&$$,"<li style=\"font-size:40px\">%s</li>",$1);}
+	  | Lista '+' SENTENCE	{asprintf(&$$,"%s<li style=\"font-size:40px\">%s</li>",$1,$3);}
+	  ;
 
 %%
 #include "lex.yy.c"
@@ -164,9 +180,9 @@ char * navbar(){
 	return strdup(buffer);
 }
 
-char * drawTitle(char * str){
+char * drawTitle(char * str,int fontsize){
 	char buffer[1024];
-	sprintf(buffer,"		<h1 align=\"center\">%s</h1>\n",str);
+	sprintf(buffer,"		<h1 align=\"center\" style=\"font-size:%dpx\">%s</h1>\n",fontsize,str);
 	return strdup(buffer);
 }
 
