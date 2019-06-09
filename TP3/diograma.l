@@ -4,7 +4,6 @@
 #include <string.h>
 %}
 %%
-
 (?i:START) 				{return START;}
 (?i:NEXT) 				{return NEXT;}
 (?i:END) 				{return END;}
@@ -21,13 +20,15 @@
 (?i:ENDTAB)				{return ENDTAB;}
 (?i:TITULO)				{return TITULO;}
 (?i:LIST)				{return LIST;}
-(?i:ENDLIST)			{return ENDLIST;}
-(?i:BACKGROUND)			{return BACKGROUND;}
+(?i:TEXT)				{return TEXT;}
+(?i:ENDTEXT)				{return ENDTEXT;}
+(?i:ENDLIST)				{return ENDLIST;}
+(?i:BACKGROUND)				{return BACKGROUND;}
 (?i:PAGINI)				{return PAGINI;}
 [a-zA-Z]+				{yylval.str = strdup(yytext); return WORD; }
-[0-9]+      			{yylval.num = atoi(yytext); return NUM;}
-[;\:|\{\}\+]			{return yytext[0];}
-\'[^\']+\'  			{yytext[yyleng-1] = '\0'; yylval.sentence = strdup(yytext+1); return SENTENCE; }
+[0-9]+      				{yylval.num = atoi(yytext); return NUM;}
+[;\:|\{\}\+]				{return yytext[0];}
+\'[^\']+\'  				{yytext[yyleng-1] = '\0'; yylval.sentence = strdup(yytext+1); return SENTENCE; }
 .|\n {;}
 %%
 

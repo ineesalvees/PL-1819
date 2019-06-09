@@ -24,11 +24,11 @@ int n_slides;
 FILE * fp;
 %}
 %union {char * str; char * sentence; int num;}
-%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB TITULO BACKGROUND AUDIO LIST ENDLIST PAGINI
+%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB TITULO BACKGROUND AUDIO LIST ENDLIST PAGINI TEXT ENDTEXT
 %token <str> WORD
 %token <num> NUM
 %token <sentence> SENTENCE
-%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia ListaHtml Lista PagIni
+%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia ListaHtml Lista PagIni Texto TextoHtml
 
 %%
 generator : START Designacao PagIni Elementos END {printf("%s\n",$2);}
@@ -60,6 +60,7 @@ Body : Conteudo {$$=$1;}
 
 Conteudo : Multimedia	{$$=$1;}
 		 | Tabela		{$$=$1;}
+		 | TextoHtml    {$$=$1;}
 		 | ListaHtml	{$$=$1;}
 		 ;
 
@@ -117,10 +118,19 @@ Titulo : TITULO SENTENCE NUM	{char * title = drawTitle($2,$3); asprintf(&$$,"%s"
 ListaHtml : LIST Lista ENDLIST {asprintf(&$$,"<ul style=\"display:table; margin:0 auto;\">%s</ul>\n",$2);}
 		  ;
 
-Lista : SENTENCE			{asprintf(&$$,"<li style=\"font-size:40px\">%s</li>",$1);}
-	  | Lista '+' SENTENCE	{asprintf(&$$,"%s<li style=\"font-size:40px\">%s</li>",$1,$3);}
+TextoHtml : TEXT Texto ENDTEXT  {asprintf(&$$,"%s",$2);}
 	  ;
 
+	  
+Texto : SENTENCE		{asprintf(&$$,"<p>%s</p>",$1);}
+      | Texto '+' SENTENCE      {asprintf(&$$,"%s<p>%s</p>",$1,$3);}
+	;
+
+
+Lista : SENTENCE			{asprintf(&$$,"<li style=\"font-size:40px\">%s</li>",$1);}
+	  | Lista '+' SENTENCE		{asprintf(&$$,"%s<li style=\"font-size:40px\">%s</li>",$1,$3);}
+	;
+	
 %%
 #include "lex.yy.c"
 

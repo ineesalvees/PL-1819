@@ -6,7 +6,13 @@ START
 	HEAD
 		LINK 8
 	TITULO 'Era uma vez uma acções' 40
-	BODY
+	BODY	
+		TEXT
+			'Primeiro Paragrafo' +
+			'Segundo Paragrafo' +
+			'Paragrafo manhoso com um \n
+ehehheheheh'
+		ENDTEXT;
 		VIDEO helo 'teste.mp4' ;
 		TAB
 			TH 'Numero Ocurren' |
@@ -26,7 +32,14 @@ START
 			'Olas' +
 			'Estou' +
 			'afinal'
-		ENDLIST
+		ENDLIST;
+		TEXT
+			'Primeiro Paragrafo' +
+			'Segundo Paragrafo' +
+			'Paragrafo manhoso com um \n
+ehehheheheh'
+		ENDTEXT
+		
 	NEXT
 	HEAD
 		LINK 10
