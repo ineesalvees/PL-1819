@@ -24,11 +24,11 @@ int n_slides;
 FILE * fp;
 %}
 %union {char * str; char * sentence; int num;}
-%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB TITULO BACKGROUND AUDIO LIST ENDLIST PAGINI TEXT ENDTEXT
+%token START END NEXT LAST LINK VIDEO HEAD BODY IMAGEM TD TH TAB ENDTAB TITULO BACKGROUND AUDIO LIST ENDLIST PAGINI TEXT ENDTEXT BOLD IT MARK EM STRONG ENDBOLD ENDIT ENDMARK ENDEM ENDSTRONG SMALL ENDSMALL
 %token <str> WORD
 %token <num> NUM
 %token <sentence> SENTENCE
-%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia ListaHtml Lista PagIni Texto TextoHtml
+%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia ListaHtml Lista PagIni Texto TextoHtml Formatacao Frase
 
 %%
 generator : START Designacao PagIni Elementos END {printf("%s\n",$2);}
@@ -122,10 +122,22 @@ TextoHtml : TEXT Texto ENDTEXT  {asprintf(&$$,"%s",$2);}
 	  ;
 
 	  
-Texto : SENTENCE		{asprintf(&$$,"<p>%s</p>",$1);}
-      | Texto '+' SENTENCE      {asprintf(&$$,"%s<p>%s</p>",$1,$3);}
+Texto : Frase			{asprintf(&$$,"<p>%s</p>",$1);}
+      | Texto '+' Frase      	{asprintf(&$$,"%s<p>%s</p>",$1,$3);}
+	;
+Frase : SENTENCE		{$$=$1;}
+      | Formatacao		{$$=$1;}
+      | SENTENCE Formatacao     {asprintf(&$$,"%s %s",$1,$2);}
+      | Formatacao SENTENCE     {asprintf(&$$,"%s %s",$1,$2);}
 	;
 
+Formatacao :  BOLD Frase ENDBOLD  {asprintf(&$$,"<b>%s</b>",$2);}
+	   |  IT Frase ENDIT  {asprintf(&$$,"<i>%s</i>",$2);}
+	   |  MARK Frase ENDMARK  {asprintf(&$$,"<mark>%s</mark>",$2);}
+	   |  EM Frase ENDEM  {asprintf(&$$,"<em>%s</em>",$2);}
+	   |  STRONG Frase ENDSTRONG  {asprintf(&$$,"<strong>%s</strong>",$2);}
+	   |  SMALL Frase ENDSMALL  {asprintf(&$$,"<small>%s</small>",$2);}
+	   ;
 
 Lista : SENTENCE			{asprintf(&$$,"<li style=\"font-size:40px\">%s</li>",$1);}
 	  | Lista '+' SENTENCE		{asprintf(&$$,"%s<li style=\"font-size:40px\">%s</li>",$1,$3);}

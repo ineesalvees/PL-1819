@@ -8,10 +8,10 @@ START
 	TITULO 'Era uma vez uma acções' 40
 	BODY	
 		TEXT
-			'Primeiro Paragrafo' +
-			'Segundo Paragrafo' +
-			'Paragrafo manhoso com um \n
-ehehheheheh'
+			'Primeiro' BOLD 'Paragrafo' ENDBOLD +
+			STRONG 'Segundo'  EM 'Paragrafo' ENDEM ENDSTRONG +
+			SMALL EM 'Paragrafo manhoso com um \n
+ehehheheheh' ENDEM ENDSMALL
 		ENDTEXT;
 		VIDEO helo 'teste.mp4' ;
 		TAB
