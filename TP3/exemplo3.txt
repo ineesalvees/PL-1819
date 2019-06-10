@@ -1,0 +1,28 @@
+START
+	{ 'teste' 2 }
+	PAGINI
+		LINK 10
+		TITULO 'Apresentação Teste' 144
+	HEAD
+		LINK 10
+	TITULO 'Slide 1' 40
+	BODY
+		TAB
+			TH 'Número de Ocurrências' |
+			TH 'Designacao'
+			TD '25' |
+			TD 'Braga' :
+			TD '54' |
+			TD 'Lisboa'
+		ENDTAB
+	NEXT
+	HEAD
+		LAST
+	TITULO 'Créditos' 45
+	BODY
+		LIST
+			'Diogo Sobral' +
+			'Alexandre Pacheco' +
+			'Inês Alves'
+		ENDLIST
+END
