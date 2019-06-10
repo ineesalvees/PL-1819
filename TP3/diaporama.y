@@ -28,10 +28,14 @@ FILE * fp;
 %token <str> WORD
 %token <num> NUM
 %token <sentence> SENTENCE
-%type <str> generator Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia ListaHtml Lista PagIni Texto TextoHtml Formatacao Frase
+%type <str> generador Diaporama Designacao Elementos Elemento Head Body Url Nome Conteudo Tabela Cabecalho Linhas Linha Coluna Titulo Multimedia ListaHtml Lista PagIni Texto TextoHtml Formatacao Frase
 
 %%
-generator : START Designacao PagIni Elementos END {printf("%s\n",$2);}
+generador : Diaporama
+		  | generador Diaporama
+		  ;
+
+Diaporama : START Designacao PagIni Elementos END {printf("%s\n",$2);}
 
 Elementos : Elemento
 		  | Elementos NEXT Elemento
@@ -90,8 +94,8 @@ PagIni : PAGINI Head Titulo {char * navb = navbar();
 					}
 		;
 
-Designacao : '{' SENTENCE NUM '}' {diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = ""; asprintf(&$$,"%s-%d",$2,$3);}
-           | '{' SENTENCE NUM BACKGROUND SENTENCE '}' {diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = strdup($5); asprintf(&$$,"%s-%d",$2,$3);}
+Designacao : '{' SENTENCE NUM '}' {elemento=0; diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = ""; asprintf(&$$,"%s-%d",$2,$3);}
+           | '{' SENTENCE NUM BACKGROUND SENTENCE '}' {elemento=0; diagrama_nome = strdup($2); mkdir(diagrama_nome,0700); n_slides = $3; UrlBackground = strdup($5); asprintf(&$$,"%s-%d",$2,$3);}
 		   ;
 
 Tabela : TAB Cabecalho Linhas ENDTAB {asprintf(&$$,"<style>table, th, td { border: 1px solid black;} </style>\n<table style=\"display: block; margin-left: auto; margin-right: auto; width: 50%%\">%s%s</table>\n",$2,$3);}
@@ -121,7 +125,7 @@ ListaHtml : LIST Lista ENDLIST {asprintf(&$$,"<ul style=\"display:table; margin:
 TextoHtml : TEXT Texto ENDTEXT  {asprintf(&$$,"%s",$2);}
 	  ;
 
-	  
+
 Texto : Frase			{asprintf(&$$,"<p>%s</p>",$1);}
       | Texto '+' Frase      	{asprintf(&$$,"%s<p>%s</p>",$1,$3);}
 	;
@@ -142,7 +146,7 @@ Formatacao :  BOLD Frase ENDBOLD  {asprintf(&$$,"<b>%s</b>",$2);}
 Lista : SENTENCE			{asprintf(&$$,"<li style=\"font-size:40px\">%s</li>",$1);}
 	  | Lista '+' SENTENCE		{asprintf(&$$,"%s<li style=\"font-size:40px\">%s</li>",$1,$3);}
 	;
-	
+
 %%
 #include "lex.yy.c"
 

@@ -6,7 +6,7 @@ START
 	HEAD
 		LINK 8
 	TITULO 'Era uma vez uma acções' 40
-	BODY	
+	BODY
 		TEXT
 			'Primeiro' BOLD 'Paragrafo' ENDBOLD +
 			STRONG 'Segundo'  EM 'Paragrafo' ENDEM ENDSTRONG +
@@ -39,7 +39,66 @@ ehehheheheh' ENDEM ENDSMALL
 			'Paragrafo manhoso com um \n
 ehehheheheh'
 		ENDTEXT
-		
+
+	NEXT
+	HEAD
+		LINK 10
+	TITULO 'Era uma vez duas acções' 40
+	BODY
+		VIDEO hlal 'teste.mp4'
+	NEXT
+	HEAD
+		LAST
+	TITULO 'Creditos' 45
+	BODY
+		LIST
+			'Diogo Sobral' +
+			'Alexandre Parreco' +
+			'Inês Dogo'
+		ENDLIST
+END
+START
+	{ 'teste2' 4 BACKGROUND 'background.jpg' }
+	PAGINI
+		LINK 10
+		TITULO 'Era a primeira vez' 144
+	HEAD
+		LINK 8
+	TITULO 'Era uma vez uma acções' 40
+	BODY
+		TEXT
+			'Primeiro' BOLD 'Paragrafo' ENDBOLD +
+			STRONG 'Segundo'  EM 'Paragrafo' ENDEM ENDSTRONG +
+			SMALL EM 'Paragrafo manhoso com um \n
+ehehheheheh' ENDEM ENDSMALL
+		ENDTEXT;
+		VIDEO helo 'teste.mp4' ;
+		TAB
+			TH 'Numero Ocurren' |
+			TH 'Designacao'
+			TD '25' |
+			TD 'Braga' :
+			TD '54' |
+			TD 'Lisboa'
+		ENDTAB;
+		AUDIO lol 'sound.mp3'
+	NEXT
+	HEAD
+		LINK 10
+	BODY
+		IMAGEM hlol 'dashboard.png' ;
+		LIST
+			'Olas' +
+			'Estou' +
+			'afinal'
+		ENDLIST;
+		TEXT
+			'Primeiro Paragrafo' +
+			'Segundo Paragrafo' +
+			'Paragrafo manhoso com um \n
+ehehheheheh'
+		ENDTEXT
+
 	NEXT
 	HEAD
 		LINK 10
